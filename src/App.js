@@ -1,6 +1,6 @@
 import './index.css';
 import { useState } from 'react';
-import { useData, DataProvider } from './DataContext';
+import { useData, DataProvider } from "./DataContext_clean";
 import FunnelVisualizer from './FunnelChart';
 import AdminPanel from './AdminPanel';
 
@@ -127,5 +127,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
