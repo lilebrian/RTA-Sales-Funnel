@@ -1,3 +1,4 @@
+console.log("BUILD_MARKER: 2025-08-12-1");
 import './index.css';
 import { useState } from 'react';
 import { useData, DataProvider } from "./DataContext_clean";
@@ -127,6 +128,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
