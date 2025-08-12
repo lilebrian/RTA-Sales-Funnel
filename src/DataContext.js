@@ -1,7 +1,12 @@
 /* eslint-disable */
 import { createContext, useContext, useEffect, useState } from "react";
 
-const DataContext = createContext();
+const DataContext = createContext({
+  data: {},
+  updateData: function(){},
+  refresh: function(){},
+  getCounts: function(){ return [0,0,0,0,0,0]; }
+});
 export const useData = () => useContext(DataContext);
 
 const API_URL = "https://api.sheetbest.com/sheets/372acb1a-2bfe-450a-92e9-d309cdec338b";
@@ -14,16 +19,16 @@ export function DataProvider(props) {
   const [data, setData] = useState({});
 
   function structure(rows){
-    var o = {};
+    var out = {};
     rows.forEach(function(row){
       var key = norm(row["Client Name"]) + "_" + norm(row["Month"]) + "_" + norm(row["Persona"]);
-      o[key] = FIELDS.map(function(f){ return parseInt(row[f],10) || 0; });
+      out[key] = FIELDS.map(function(f){ return parseInt(row[f], 10) || 0; });
     });
-    return o;
+    return out;
   }
 
   function load(){
-    var url = API_URL + "?ts=" + Date.now();
+    var url = API_URL + "?ts=" + Date.now(); // cache-bust
     return fetch(url, { headers: { "Cache-Control":"no-cache", "Pragma":"no-cache" } })
       .then(function(r){ return r.json(); })
       .then(function(rows){ setData(structure(rows)); })
@@ -32,7 +37,7 @@ export function DataProvider(props) {
 
   useEffect(function(){
     load();
-    var id = setInterval(load, 30000);
+    var id = setInterval(load, 30000); // poll every 30s
     return function(){ clearInterval(id); };
   }, []);
 
@@ -71,9 +76,23 @@ export function DataProvider(props) {
     }
   }
 
+  function refresh(){ return load(); }
+
+  function getCounts(clientName, month, persona){
+    var key = norm(clientName) + "_" + norm(month) + "_" + norm(persona);
+    return data[key] || [0,0,0,0,0,0];
+  }
+
   return (
-    <DataContext.Provider value={{ data, updateData }}>
+    <DataContext.Provider value={{ data, updateData, refresh, getCounts }}>
       {children}
+    </DataContext.Provider>
+  );
+}
+
+// Provide a default export too, in case something imports default.
+export default DataContext;
+
     </DataContext.Provider>
   );
 }
