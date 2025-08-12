@@ -1,34 +1,34 @@
 /* eslint-disable */
 import { createContext, useContext, useEffect, useState } from "react";
 
+const API_URL = "https://api.sheetbest.com/sheets/372acb1a-2bfe-450a-92e9-d309cdec338b";
+const FIELDS = ["Outreach","Connections","Replies","Meetings","Proposals","Contracts"];
+
+function norm(v){ return (v == null ? "" : String(v)).trim(); }
+
 const DataContext = createContext({
   data: {},
   updateData: function(){},
   refresh: function(){},
   getCounts: function(){ return [0,0,0,0,0,0]; }
 });
+
 export const useData = () => useContext(DataContext);
 
-const API_URL = "https://api.sheetbest.com/sheets/372acb1a-2bfe-450a-92e9-d309cdec338b";
-const FIELDS = ["Outreach","Connections","Replies","Meetings","Proposals","Contracts"];
-
-function norm(v){ return (v == null ? "" : String(v)).trim(); }
-
-export function DataProvider(props) {
-  const children = props.children;
+export function DataProvider({ children }) {
   const [data, setData] = useState({});
 
   function structure(rows){
-    var out = {};
+    const out = {};
     rows.forEach(function(row){
-      var key = norm(row["Client Name"]) + "_" + norm(row["Month"]) + "_" + norm(row["Persona"]);
+      const key = norm(row["Client Name"]) + "_" + norm(row["Month"]) + "_" + norm(row["Persona"]);
       out[key] = FIELDS.map(function(f){ return parseInt(row[f], 10) || 0; });
     });
     return out;
   }
 
   function load(){
-    var url = API_URL + "?ts=" + Date.now(); // cache-bust
+    const url = API_URL + "?ts=" + Date.now(); // cache-bust
     return fetch(url, { headers: { "Cache-Control":"no-cache", "Pragma":"no-cache" } })
       .then(function(r){ return r.json(); })
       .then(function(rows){ setData(structure(rows)); })
@@ -37,16 +37,16 @@ export function DataProvider(props) {
 
   useEffect(function(){
     load();
-    var id = setInterval(load, 30000); // poll every 30s
+    const id = setInterval(load, 30000); // poll every 30s
     return function(){ clearInterval(id); };
   }, []);
 
   async function updateData(clientName, month, persona, counts){
-    var key = norm(clientName) + "_" + norm(month) + "_" + norm(persona);
-    var nd = {}; for (var k in data) nd[k] = data[k]; nd[key] = counts;
+    const key = norm(clientName) + "_" + norm(month) + "_" + norm(persona);
+    const nd = {}; for (const k in data) nd[k] = data[k]; nd[key] = counts;
     setData(nd);
 
-    var row = [{
+    const row = [{
       "Client Name": clientName,
       "Month": month,
       "Persona": persona,
@@ -79,7 +79,7 @@ export function DataProvider(props) {
   function refresh(){ return load(); }
 
   function getCounts(clientName, month, persona){
-    var key = norm(clientName) + "_" + norm(month) + "_" + norm(persona);
+    const key = norm(clientName) + "_" + norm(month) + "_" + norm(persona);
     return data[key] || [0,0,0,0,0,0];
   }
 
@@ -90,9 +90,4 @@ export function DataProvider(props) {
   );
 }
 
-// Provide a default export too, in case something imports default.
 export default DataContext;
-
-    </DataContext.Provider>
-  );
-}
