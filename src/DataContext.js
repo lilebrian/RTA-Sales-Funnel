@@ -7,7 +7,7 @@ export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [clientName] = useState("RTA Consulting");
-  const [selectedMonth, setSelectedMonth] = useState("May 2025");
+  const [selectedMonth, setSelectedMonth] = useState("January 2025");
   const [selectedPersona, setSelectedPersona] = useState("BioTech");
   const [counts, setCounts] = useState([0, 0, 0, 0, 0, 0]);
   const [data, setData] = useState({});
