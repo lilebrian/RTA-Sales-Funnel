@@ -7,7 +7,7 @@ import AdminPanel from "./AdminPanel";
 const months = [
   "January 2025", "February 2025", "March 2025", "April 2025",
   "May 2025", "June 2025", "July 2025", "August 2025",
-  "September 2025", "October 2025", "November 2025", "December 2025",
+  "September 2025", "October 2025", "November 2025", "December 2025"
 ];
 
 const personas = ["Biotech", "Greentech/Sustainability"];
@@ -59,4 +59,72 @@ function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
         <img src="/logo-dark.jpg" alt="SalesFire Consulting Logo" style={{ height: "100px" }} />
       </div>
-      <h2 style={{ textAlign: "center", color: "#C44528", marginBottom: "2re
+      <h2 style={{ textAlign: "center", color: "#C44528", marginBottom: "2rem" }}>
+        Sales Funnel Dashboard
+      </h2>
+
+      <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "2rem" }}>
+        <select value={selectedMonth} onChange={(e) => onMonthChange(e.target.value)} style={dropdownStyle}>
+          {months.map((month) => <option key={month}>{month}</option>)}
+        </select>
+        <select value={selectedPersona} onChange={(e) => onPersonaChange(e.target.value)} style={dropdownStyle}>
+          {personas.map((persona) => <option key={persona}>{persona}</option>)}
+        </select>
+      </div>
+
+      <FunnelVisualizer data={counts} stages={stages} />
+
+      <table style={{ width: "100%", textAlign: "left", borderSpacing: "0 10px" }}>
+        <thead>
+          <tr style={{ color: "#ccc", fontSize: "0.9rem" }}>
+            <th>Stage</th><th>Count</th><th>Conversion Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stages.map((stage, i) => (
+            <tr key={stage} style={{ backgroundColor: "#1D2739", color: "white" }}>
+              <td style={{ padding: "0.5rem", fontWeight: "bold" }}>{stage}</td>
+              <td style={{ padding: "0.5rem" }}>{counts[i]}</td>
+              <td style={{ padding: "0.5rem" }}>{conversionRates[i]}</td>
+            </tr>
+          ))}
+          <tr style={{ backgroundColor: "#202B3D", color: "white", fontWeight: "bold" }}>
+            <td style={{ padding: "0.5rem" }}>Win Rate</td>
+            <td style={{ padding: "0.5rem" }} colSpan="2">{winRate}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+const dropdownStyle = {
+  padding: "0.5rem",
+  backgroundColor: "#1D2739",
+  color: "white",
+  border: "1px solid #39455D",
+  borderRadius: "5px",
+};
+
+export default function App() {
+  const [selectedMonth, setSelectedMonth] = useState("January 2025");
+  const [selectedPersona, setSelectedPersona] = useState("Biotech");
+  const clientName = "AboveAllStaffing";
+
+  return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#0B111D", color: "white", padding: "2rem" }}>
+      <DataProvider clientName={clientName}>
+        <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start", maxWidth: "1200px", margin: "0 auto" }}>
+          <AdminPanel />
+          <Dashboard
+            clientName={clientName}
+            selectedMonth={selectedMonth}
+            selectedPersona={selectedPersona}
+            onMonthChange={setSelectedMonth}
+            onPersonaChange={setSelectedPersona}
+          />
+        </div>
+      </DataProvider>
+    </div>
+  );
+}
