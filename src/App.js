@@ -1,7 +1,6 @@
 import "./index.css";
 import { useState } from "react";
 import { DataProvider } from "./DataContext";
-import FunnelVisualizer from "./FunnelChart";
 import AdminPanel from "./AdminPanel";
 import Dashboard from "./Dashboard";
 
