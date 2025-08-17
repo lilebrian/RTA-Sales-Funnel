@@ -1,7 +1,8 @@
 // DataContext.js
 import React, { createContext, useEffect, useMemo, useState } from "react";
 
-const API_URL = process.env.REACT_APP_SHEETBEST_URL;
+// Hardcoded Sheetbest API URL
+const API_URL = "https://api.sheetbest.com/sheets/478f9c3e-5b45-4f46-aacf-958cc41d1dc9";
 
 export const DataContext = createContext();
 
@@ -22,7 +23,7 @@ function monthKeyFromLabel(label) {
     sep: 9, sept: 9, september: 9,
     oct: 10, october: 10,
     nov: 11, november: 11,
-    dec: 12, december: 12,
+    dec: 12, december: 12
   };
 
   const parts = s.split(/\s+/);
@@ -50,4 +51,135 @@ function toNumber(v) {
 export const DataProvider = ({ children, clientName = "DefaultClient" }) => {
   const months = useMemo(
     () => [
-      "January 2025", "February 2025", "March 2025", "April 2025",
+      "January 2025",
+      "February 2025",
+      "March 2025",
+      "April 2025",
+      "May 2025",
+      "June 2025",
+      "July 2025",
+      "August 2025",
+      "September 2025",
+      "October 2025",
+      "November 2025",
+      "December 2025"
+    ],
+    []
+  );
+
+  const personas = useMemo(
+    () => ["Biotech", "Greentech/Sustainability"],
+    []
+  );
+
+  const [selectedMonth, setSelectedMonth] = useState("January 2025");
+  const [selectedPersona, setSelectedPersona] = useState("Biotech");
+  const [counts, setCounts] = useState([0, 0, 0, 0, 0, 0]);
+  const [data, setData] = useState({});
+
+  function keyOf(client, monthLabel, personaLabel) {
+    const mk = monthKeyFromLabel(monthLabel);
+    const pk = personaKey(personaLabel);
+    return `${client}__${mk}__${pk}`;
+  }
+
+  const updateData = async (client, monthLabel, personaLabel, newCounts, weekOf) => {
+    const k = keyOf(client, monthLabel, personaLabel);
+    const merged = { ...data, [k]: newCounts };
+    setData(merged);
+
+    const payload = {
+      "Client Name": client,
+      "Month": monthKeyFromLabel(monthLabel),
+      "Week of": weekOf || "",
+      "Persona": personaLabel,
+      "Outreach": toNumber(newCounts[0]),
+      "Connections": toNumber(newCounts[1]),
+      "Replies": toNumber(newCounts[2]),
+      "Meetings": toNumber(newCounts[3]),
+      "Proposals": toNumber(newCounts[4]),
+      "Contracts": toNumber(newCounts[5])
+    };
+
+    try {
+      if (!API_URL) throw new Error("Missing REACT_APP_SHEETBEST_URL");
+      const resp = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`POST ${resp.status}: ${txt}`);
+      }
+      const result = await resp.json();
+      console.log("✅ Sheet.best response:", result);
+    } catch (err) {
+      console.error("❌ Error saving data:", err);
+    }
+  };
+
+  const loadData = async () => {
+    try {
+      if (!API_URL) throw new Error("Missing REACT_APP_SHEETBEST_URL");
+      const resp = await fetch(API_URL);
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`GET ${resp.status}: ${txt}`);
+      }
+      const rows = await resp.json();
+
+      const aggregated = {};
+      rows.forEach((row) => {
+        const client = row["Client Name"] || "";
+        const mk = monthKeyFromLabel(row["Month"]);
+        const pk = personaKey(row["Persona"]);
+        if (!client || !mk) return;
+
+        const k = `${client}__${mk}__${pk}`;
+        const cts = [
+          toNumber(row["Outreach"]),
+          toNumber(row["Connections"]),
+          toNumber(row["Replies"]),
+          toNumber(row["Meetings"]),
+          toNumber(row["Proposals"]),
+          toNumber(row["Contracts"])
+        ];
+
+        if (!aggregated[k]) aggregated[k] = [0, 0, 0, 0, 0, 0];
+        aggregated[k] = aggregated[k].map((v, i) => v + cts[i]);
+      });
+
+      setData(aggregated);
+      console.log("📊 Aggregated data:", aggregated);
+    } catch (err) {
+      console.error("❌ Error loading data:", err);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  return (
+    <DataContext.Provider
+      value={{
+        clientName,
+        months,
+        personas,
+        selectedMonth,
+        setSelectedMonth,
+        selectedPersona,
+        setSelectedPersona,
+        counts,
+        setCounts,
+        updateData,
+        loadData,
+        data,
+        setData
+      }}
+    >
+      {children}
+    </DataContext.Provider>
+  );
+};
