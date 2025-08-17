@@ -9,7 +9,7 @@ const months = [
   "Jul 2025", "Aug 2025", "Sep 2025", "Oct 2025", "Nov 2025", "Dec 2025"
 ];
 
-const personas = ["Operations", "Project Management", "HR/Talent Acquisition"];
+const personas = ["BioTech", "Greentech/Sustainability"];
 const stages = ["Outreach", "Connections", "Replies", "Meetings", "Proposals", "Contracts"];
 
 function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, onPersonaChange }) {
@@ -101,7 +101,7 @@ const dropdownStyle = {
 
 export default function App() {
   const [selectedMonth, setSelectedMonth] = useState("Jan 2025");
-  const [selectedPersona, setSelectedPersona] = useState("Operations");
+  const [selectedPersona, setSelectedPersona] = useState("BioTech");
   const clientName = "AboveAllStaffing";
 
   return (
@@ -121,3 +121,4 @@ export default function App() {
     </div>
   );
 }
+
