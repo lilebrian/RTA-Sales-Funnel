@@ -1,4 +1,4 @@
-import rtaLogo from ".src/assets/logo-dark.jpg.jpg
+import rtaLogo from "./assets/logo-dark.jpg";
 import "./index.css";
 import { useContext, useMemo, useEffect, useState } from "react";
 import { DataProvider, DataContext } from "./DataContext";
