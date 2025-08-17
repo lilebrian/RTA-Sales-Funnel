@@ -2,7 +2,8 @@
 import React, { createContext, useEffect, useMemo, useState } from "react";
 
 // ✅ Use CRA env var so Vercel can inject it (Settings → Environment Variables)
-const API_URL = process.env.REACT_APP_SHEETBEST_URL; // e.g. https://api.sheetbest.com/sheets/xxxx
+const API_URL = process.env.REACT_APP_SHEETBEST_URL=https://api.sheetbest.com/sheets/478f9c3e-5b45-4f46-aacf-958cc41d1dc9
+
 
 export const DataContext = createContext();
 
