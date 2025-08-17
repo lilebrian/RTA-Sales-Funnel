@@ -5,9 +5,18 @@ import FunnelVisualizer from "./FunnelChart";
 import AdminPanel from "./AdminPanel";
 
 const months = [
-  "January 2025", "February 2025", "March 2025", "April 2025",
-  "May 2025", "June 2025", "July 2025", "August 2025",
-  "September 2025", "October 2025", "November 2025", "December 2025"
+  "January 2025",
+  "February 2025",
+  "March 2025",
+  "April 2025",
+  "May 2025",
+  "June 2025",
+  "July 2025",
+  "August 2025",
+  "September 2025",
+  "October 2025",
+  "November 2025",
+  "December 2025"
 ];
 
 const personas = ["Biotech", "Greentech/Sustainability"];
@@ -33,7 +42,7 @@ function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, 
       sep: 9, sept: 9, september: 9,
       oct: 10, october: 10,
       nov: 11, november: 11,
-      dec: 12, december: 12,
+      dec: 12, december: 12
     };
     const parts = String(label || "").trim().split(/\s+/);
     if (parts.length >= 2) {
@@ -65,10 +74,14 @@ function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, 
 
       <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "2rem" }}>
         <select value={selectedMonth} onChange={(e) => onMonthChange(e.target.value)} style={dropdownStyle}>
-          {months.map((month) => <option key={month}>{month}</option>)}
+          {months.map((month) => (
+            <option key={month}>{month}</option>
+          ))}
         </select>
         <select value={selectedPersona} onChange={(e) => onPersonaChange(e.target.value)} style={dropdownStyle}>
-          {personas.map((persona) => <option key={persona}>{persona}</option>)}
+          {personas.map((persona) => (
+            <option key={persona}>{persona}</option>
+          ))}
         </select>
       </div>
 
@@ -77,7 +90,9 @@ function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, 
       <table style={{ width: "100%", textAlign: "left", borderSpacing: "0 10px" }}>
         <thead>
           <tr style={{ color: "#ccc", fontSize: "0.9rem" }}>
-            <th>Stage</th><th>Count</th><th>Conversion Rate</th>
+            <th>Stage</th>
+            <th>Count</th>
+            <th>Conversion Rate</th>
           </tr>
         </thead>
         <tbody>
@@ -90,7 +105,9 @@ function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, 
           ))}
           <tr style={{ backgroundColor: "#202B3D", color: "white", fontWeight: "bold" }}>
             <td style={{ padding: "0.5rem" }}>Win Rate</td>
-            <td style={{ padding: "0.5rem" }} colSpan="2">{winRate}</td>
+            <td style={{ padding: "0.5rem" }} colSpan="2">
+              {winRate}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -103,7 +120,7 @@ const dropdownStyle = {
   backgroundColor: "#1D2739",
   color: "white",
   border: "1px solid #39455D",
-  borderRadius: "5px",
+  borderRadius: "5px"
 };
 
 export default function App() {
@@ -114,7 +131,15 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#0B111D", color: "white", padding: "2rem" }}>
       <DataProvider clientName={clientName}>
-        <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start", maxWidth: "1200px", margin: "0 auto" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "2rem",
+            alignItems: "flex-start",
+            maxWidth: "1200px",
+            margin: "0 auto"
+          }}
+        >
           <AdminPanel />
           <Dashboard
             clientName={clientName}
