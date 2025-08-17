@@ -1,5 +1,5 @@
 import "./index.css";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { DataProvider, DataContext } from "./DataContext";
 import FunnelVisualizer from "./FunnelChart";
 import AdminPanel from "./AdminPanel";
@@ -29,37 +29,35 @@ function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, 
     loadData();
   }, [loadData]);
 
-  const monthKeyFromLabel = (label) => {
-    const map = {
-      jan: 1, january: 1,
-      feb: 2, february: 2,
-      mar: 3, march: 3,
-      apr: 4, april: 4,
-      may: 5,
-      jun: 6, june: 6,
-      jul: 7, july: 7,
-      aug: 8, august: 8,
-      sep: 9, sept: 9, september: 9,
-      oct: 10, october: 10,
-      nov: 11, november: 11,
-      dec: 12, december: 12
-    };
-    const parts = String(label || "").trim().split(/\s+/);
-    if (parts.length >= 2) {
-      const m = map[parts[0].toLowerCase()];
-      const y = parseInt(parts[1], 10);
-      if (m && y) return `${y}-${String(m).padStart(2, "0")}`;
+  // Build key exactly the same way DataContext does
+  const monthKey = (label) => {
+    const parts = String(label || "").split(" ");
+    if (parts.length === 2) {
+      const monthMap = {
+        January: "01",
+        February: "02",
+        March: "03",
+        April: "04",
+        May: "05",
+        June: "06",
+        July: "07",
+        August: "08",
+        September: "09",
+        October: "10",
+        November: "11",
+        December: "12"
+      };
+      return `${parts[1]}-${monthMap[parts[0]]}`;
     }
-    return String(label || "");
+    return label;
   };
 
-  const personaKey = (p) => String(p || "").trim().toLowerCase();
-
-  const k = `${clientName}__${monthKeyFromLabel(selectedMonth)}__${personaKey(selectedPersona)}`;
-  const counts = data?.[k] || [0, 0, 0, 0, 0, 0];
+  const personaKey = (p) => String(p || "").toLowerCase();
+  const key = `${clientName}__${monthKey(selectedMonth)}__${personaKey(selectedPersona)}`;
+  const counts = data?.[key] || [0, 0, 0, 0, 0, 0];
 
   const conversionRates = counts.map((count, i) =>
-    i === 0 ? "" : (counts[i - 1] > 0 ? ((count / counts[i - 1]) * 100).toFixed(1) + "%" : "0%")
+    i === 0 ? "" : counts[i - 1] > 0 ? ((count / counts[i - 1]) * 100).toFixed(1) + "%" : "0%"
   );
   const winRate = counts[0] > 0 ? ((counts[5] / counts[0]) * 100).toFixed(1) + "%" : "0%";
 
@@ -74,13 +72,13 @@ function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, 
 
       <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "2rem" }}>
         <select value={selectedMonth} onChange={(e) => onMonthChange(e.target.value)} style={dropdownStyle}>
-          {months.map((month) => (
-            <option key={month}>{month}</option>
+          {months.map((m) => (
+            <option key={m}>{m}</option>
           ))}
         </select>
         <select value={selectedPersona} onChange={(e) => onPersonaChange(e.target.value)} style={dropdownStyle}>
-          {personas.map((persona) => (
-            <option key={persona}>{persona}</option>
+          {personas.map((p) => (
+            <option key={p}>{p}</option>
           ))}
         </select>
       </div>
@@ -96,9 +94,9 @@ function Dashboard({ selectedMonth, selectedPersona, clientName, onMonthChange, 
           </tr>
         </thead>
         <tbody>
-          {stages.map((stage, i) => (
-            <tr key={stage} style={{ backgroundColor: "#1D2739", color: "white" }}>
-              <td style={{ padding: "0.5rem", fontWeight: "bold" }}>{stage}</td>
+          {stages.map((s, i) => (
+            <tr key={s} style={{ backgroundColor: "#1D2739", color: "white" }}>
+              <td style={{ padding: "0.5rem", fontWeight: "bold" }}>{s}</td>
               <td style={{ padding: "0.5rem" }}>{counts[i]}</td>
               <td style={{ padding: "0.5rem" }}>{conversionRates[i]}</td>
             </tr>
