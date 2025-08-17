@@ -8,7 +8,7 @@ export const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [clientName] = useState("AboveAllStaffing");
   const [selectedMonth, setSelectedMonth] = useState("May 2025");
-  const [selectedPersona, setSelectedPersona] = useState("Operations");
+  const [selectedPersona, setSelectedPersona] = useState("BioTech");
   const [counts, setCounts] = useState([0, 0, 0, 0, 0, 0]);
   const [data, setData] = useState({});
 
@@ -18,7 +18,7 @@ export const DataProvider = ({ children }) => {
     "Sep 2025", "Oct 2025", "Nov 2025", "Dec 2025"
   ];
 
-  const personas = ["Operations", "Project Management", "HR/Talent Acquisition"];
+  const personas = ["Biotech", "Greentech/Sustainability"];
 
   const updateData = async (clientName, month, persona, counts, weekOf) => {
     const key = `${clientName}_${month}_${persona}`;
