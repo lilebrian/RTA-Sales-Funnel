@@ -105,7 +105,7 @@ const dropdownStyle = {
 
 export default function App() {
   // IMPORTANT: this must match "Client Name" in your Sheet rows exactly (case & spacing)
-  const clientName = "AboveAllStaffing";
+  const clientName = "RTA Consulting";
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#0B111D", color: "white", padding: "2rem" }}>
