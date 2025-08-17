@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { DataContext } from "./DataContext";
 
 export default function AdminPanel() {
@@ -13,122 +13,81 @@ export default function AdminPanel() {
     counts,
     setCounts,
     updateData,
+    loadData,
   } = useContext(DataContext);
 
   const [weekOf, setWeekOf] = useState("");
 
-  const handleCountChange = (index, value) => {
-    const updated = [...counts];
-    updated[index] = parseInt(value) || 0;
-    setCounts(updated);
+  const handleCount = (i, val) => {
+    const n = parseInt(val, 10);
+    const safe = isNaN(n) ? 0 : n;
+    const next = [...counts];
+    next[i] = safe;
+    setCounts(next);
   };
 
-  const handleSave = () => {
-    updateData(clientName, selectedMonth, selectedPersona, counts, weekOf);
+  const handleSave = async () => {
+    await updateData(clientName, selectedMonth, selectedPersona, counts, weekOf);
+    await loadData(); // refresh aggregated totals so Dashboard updates
   };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: "20rem",
-        padding: "1.5rem",
-        backgroundColor: "#0B111D",
-        borderRight: "1px solid #2c2c2c",
-        borderRadius: "0.5rem",
-        fontFamily: "sans-serif",
-      }}
-    >
-      <h2
-        style={{
-          fontSize: "1.25rem",
-          fontWeight: "bold",
-          marginBottom: "1.5rem",
-          color: "white",
-        }}
-      >
-        Admin Panel
-      </h2>
+    <div style={{ flex: 1, backgroundColor: "#111827", padding: "1rem", borderRadius: "1rem" }}>
+      <h3 style={{ marginTop: 0 }}>Admin</h3>
 
-      <label style={labelStyle}>Month</label>
-      <select
-        value={selectedMonth}
-        onChange={(e) => setSelectedMonth(e.target.value)}
-        style={inputStyle}
-      >
-        {months.map((month) => (
-          <option key={month}>{month}</option>
-        ))}
-      </select>
+      <div style={{ display: "grid", gap: "0.5rem" }}>
+        <label>
+          Month:
+          <select value={selectedMonth} onChange={(e)=>setSelectedMonth(e.target.value)} style={selectStyle}>
+            {months.map((m)=> <option key={m}>{m}</option>)}
+          </select>
+        </label>
 
-      <label style={labelStyle}>Persona</label>
-      <select
-        value={selectedPersona}
-        onChange={(e) => setSelectedPersona(e.target.value)}
-        style={inputStyle}
-      >
-        {personas.map((persona) => (
-          <option key={persona}>{persona}</option>
-        ))}
-      </select>
+        <label>
+          Persona:
+          <select value={selectedPersona} onChange={(e)=>setSelectedPersona(e.target.value)} style={selectStyle}>
+            {personas.map((p)=> <option key={p}>{p}</option>)}
+          </select>
+        </label>
 
-      <label style={labelStyle}>Week of</label>
-      <input
-        type="text"
-        value={weekOf}
-        onChange={(e) => setWeekOf(e.target.value)}
-        placeholder="e.g. May 20–26"
-        style={inputStyle}
-      />
+        <label>
+          Week of (optional):
+          <input
+            type="text"
+            placeholder="YYYY-MM-DD"
+            value={weekOf}
+            onChange={(e)=>setWeekOf(e.target.value)}
+            style={inputStyle}
+          />
+        </label>
 
-      {["Outreach", "Connections", "Replies", "Meetings", "Proposals", "Contracts"].map(
-        (label, i) => (
-          <div key={i}>
-            <label style={labelStyle}>{label}</label>
+        {["Outreach","Connections","Replies","Meetings","Proposals","Contracts"].map((label, i) => (
+          <label key={label}>
+            {label}:
             <input
               type="number"
+              min="0"
               value={counts[i]}
-              onChange={(e) => handleCountChange(i, e.target.value)}
+              onChange={(e)=>handleCount(i, e.target.value)}
               style={inputStyle}
             />
-          </div>
-        )
-      )}
+          </label>
+        ))}
 
-      <button onClick={handleSave} style={buttonStyle}>
-        Save
-      </button>
+        <button onClick={handleSave} style={buttonStyle}>Save</button>
+      </div>
     </div>
   );
 }
 
-const inputStyle = {
-  width: "100%",
-  padding: "0.5rem",
-  marginBottom: "1rem",
-  borderRadius: "5px",
-  backgroundColor: "#1D2739",
-  color: "white",
-  border: "1px solid #39455D",
-  fontSize: "0.95rem",
-};
-
-const labelStyle = {
-  color: "white",
-  marginBottom: "0.25rem",
-  fontSize: "0.9rem",
-  display: "block",
-};
-
+const selectStyle = { marginLeft: "0.5rem", padding: "0.25rem" };
+const inputStyle  = { marginLeft: "0.5rem", padding: "0.25rem", width: "8rem" };
 const buttonStyle = {
-  marginTop: "1rem",
-  width: "100%",
-  backgroundColor: "#C44528",
-  color: "white",
-  fontWeight: "bold",
-  padding: "0.6rem",
-  borderRadius: "5px",
+  marginTop: "0.5rem",
+  padding: "0.5rem 0.75rem",
+  background: "#C44528",
+  color: "#fff",
   border: "none",
-  fontSize: "1rem",
+  borderRadius: "6px",
   cursor: "pointer",
 };
