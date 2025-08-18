@@ -67,7 +67,12 @@ function Dashboard() {
   return (
     <div style={{ flex: 2, backgroundColor: "#0B111D", padding: "2rem", borderRadius: "1rem" }}>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
-        <img src="/logo-dark.jpg" alt="SalesFire Consulting Logo" style={{ height: "100px" }} />
+        <img
+  src={rtaLogo}
+  alt="SalesFire Consulting logo"
+  style={{ height: "100px" }}
+/>
+ />
       </div>
 
       <h2 style={{ textAlign: "center", color: "#C44528", marginBottom: "0.5rem" }}>
