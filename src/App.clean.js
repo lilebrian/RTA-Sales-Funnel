@@ -70,9 +70,7 @@ function Dashboard() {
         <img
   src={rtaLogo}
   alt="SalesFire Consulting logo"
-  style={{ height: "100px" }}
-/>
- />
+  style={{ height: "100px" }}/>
       </div>
 
       <h2 style={{ textAlign: "center", color: "#C44528", marginBottom: "0.5rem" }}>
